@@ -1,0 +1,879 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=description content="微服务架构的演变 Evolution   从单块系统到微服务系统的演进  微服务架构的演进  典型的微服务业务场景  更完整的微服务架构  系统边界  微服务到服务网格还缺什么? Sidecar 的工作原理  Service Mesh  适应性"><meta property="og:title" content><meta property="og:description" content="微服务架构的演变 Evolution   从单块系统到微服务系统的演进  微服务架构的演进  典型的微服务业务场景  更完整的微服务架构  系统边界  微服务到服务网格还缺什么? Sidecar 的工作原理  Service Mesh  适应性"><meta property="og:type" content="website"><meta property="og:image" content="https://obsidian.codeplayer.org/icon.png"><meta property="og:url" content="https://obsidian.codeplayer.org/CS/Kubernetes/%E5%9F%BA%E4%BA%8EIstio%E7%9A%84%E9%AB%98%E7%BA%A7%E6%B5%81%E9%87%8F%E7%AE%A1%E7%90%86/"><meta property="og:width" content="200"><meta property="og:height" content="200"><meta name=twitter:card content="summary"><meta name=twitter:title content><meta name=twitter:description content="微服务架构的演变 Evolution   从单块系统到微服务系统的演进  微服务架构的演进  典型的微服务业务场景  更完整的微服务架构  系统边界  微服务到服务网格还缺什么? Sidecar 的工作原理  Service Mesh  适应性"><meta name=twitter:image content="https://obsidian.codeplayer.org/icon.png"><title>Avalon Obsidian Vault</title><meta name=viewport content="width=device-width,initial-scale=1"><link rel="shortcut icon" type=image/png href=https://obsidian.codeplayer.org//icon.png><link href=https://obsidian.codeplayer.org/styles.80333fa2099c0bee674efa435fde378c.min.css rel=stylesheet><link href=https://obsidian.codeplayer.org/styles/_light_syntax.86a48a52faebeaaf42158b72922b1c90.min.css rel=stylesheet id=theme-link><script src=https://obsidian.codeplayer.org/js/darkmode.245a0a31da505f6b327aec1fcae860c8.min.js></script>
+<script src=https://obsidian.codeplayer.org/js/util.00639692264b21bc3ee219733d38a8be.min.js></script>
+<link rel=preload href=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css as=style onload='this.onload=null,this.rel="stylesheet"' integrity=sha384-R4558gYOUz8mP9YWpZJjofhk+zx0AS11p36HnD2ZKj/6JR5z27gSSULCNHIRReVs crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js integrity=sha384-z1fJDqw8ZApjGO3/unPWUPsIymfsJmyrDVWC8Tv/a1HeOtGmkwNd/7xUS0Xcnvsx crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/contrib/auto-render.min.js integrity=sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/copy-tex.min.js integrity=sha384-ww/583aHhxWkz5DEVn6OKtNiIaLi2iBRNZXfJRiY1Ai7tnJ9UXpEsyvOITVpTl4A crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/@floating-ui/core@1.2.1></script>
+<script src=https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.2.1></script>
+<script async src=https://obsidian.codeplayer.org/js/popover.aa9bc99c7c38d3ae9538f218f1416adb.min.js></script>
+<script defer src=https://obsidian.codeplayer.org/js/code-title.ce4a43f09239a9efb48fee342e8ef2df.min.js></script>
+<script defer src=https://obsidian.codeplayer.org/js/clipboard.2913da76d3cb21c5deaa4bae7da38c9f.min.js></script>
+<script defer src=https://obsidian.codeplayer.org/js/callouts.7723cac461d613d118ee8bb8216b9838.min.js></script>
+<script>const SEARCH_ENABLED=!1,LATEX_ENABLED=!0,PRODUCTION=!0,BASE_URL="https://obsidian.codeplayer.org/",fetchData=Promise.all([fetch("https://obsidian.codeplayer.org/indices/linkIndex.97db13785e77e40290461cad66caa30b.min.json").then(e=>e.json()).then(e=>({index:e.index,links:e.links})),fetch("https://obsidian.codeplayer.org/indices/contentIndex.e66da0182e83e532bb02a2038144f27f.min.json").then(e=>e.json())]).then(([{index:e,links:t},n])=>({index:e,links:t,content:n})),render=()=>{const e=new URL(BASE_URL),t=e.pathname,n=window.location.pathname,s=t==n;addCopyButtons(),addTitleToCodeBlocks(),addCollapsibleCallouts(),initPopover("https://obsidian.codeplayer.org",!0);const o=document.getElementById("footer");if(o){const e=document.getElementById("graph-container");if(!e)return requestAnimationFrame(render);e.textContent="";const t=s&&!1;drawGraph("https://obsidian.codeplayer.org",t,[{"/moc":"#4388cc"}],t?{centerForce:1,depth:-1,enableDrag:!0,enableLegend:!1,enableZoom:!0,fontSize:.5,linkDistance:1,opacityScale:3,repelForce:1,scale:1.4}:{centerForce:1,depth:1,enableDrag:!0,enableLegend:!1,enableZoom:!0,fontSize:.6,linkDistance:1,opacityScale:3,repelForce:2,scale:1.2})}var i=document.getElementsByClassName("mermaid");i.length>0&&import("https://unpkg.com/mermaid@9/dist/mermaid.esm.min.mjs").then(e=>{e.default.init()});function a(n){const e=n.target,t=e.className.split(" "),s=t.includes("broken"),o=t.includes("internal-link");plausible("Link Click",{props:{href:e.href,broken:s,internal:o,graph:!1}})}const r=document.querySelectorAll("a");for(link of r)link.className.includes("root-title")&&link.addEventListener("click",a,{once:!0})},init=(e=document)=>{addCopyButtons(),addTitleToCodeBlocks(),renderMathInElement(e.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1}],macros:{'’':"'"},throwOnError:!1})}</script><script type=module>
+    import { attachSPARouting } from "https:\/\/obsidian.codeplayer.org\/js\/router.d6fe6bd821db9ea97f9aeefae814d8e7.min.js"
+    attachSPARouting(init, render)
+  </script><script defer data-domain=obsidian.codeplayer.org src=https://plausible.io/js/script.js></script>
+<script>window.plausible=window.plausible||function(){(window.plausible.q=window.plausible.q||[]).push(arguments)}</script></head><body><div id=search-container><div id=search-space><input autocomplete=off id=search-bar name=search type=text aria-label=Search placeholder="Search for something..."><div id=results-container></div></div></div><script src=https://cdn.jsdelivr.net/npm/flexsearch@0.7.21/dist/flexsearch.bundle.js integrity="sha256-i3A0NZGkhsKjVMzFxv3ksk0DZh3aXqu0l49Bbh0MdjE=" crossorigin=anonymous defer></script>
+<script defer src=https://obsidian.codeplayer.org/js/full-text-search.e6e2e0c213187ca0c703d6e2c7a77fcd.min.js></script><div class=singlePage><header><h1 id=page-title><a class=root-title href=https://obsidian.codeplayer.org/>Avalon Obsidian Vault</a></h1><div class=spacer></div><div id=search-icon><p>Search</p><svg tabindex="0" aria-labelledby="title desc" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title id="title">Search Icon</title><desc id="desc">Icon to open search</desc><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"/><circle cx="8" cy="8" r="7"/></g></svg></div><div class=darkmode><input class=toggle id=darkmode-toggle type=checkbox tabindex=-1>
+<label id=toggle-label-light for=darkmode-toggle tabindex=-1><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="dayIcon" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35"><title>Light Mode</title><path d="M6 17.5C6 16.672 5.328 16 4.5 16h-3C.672 16 0 16.672.0 17.5S.672 19 1.5 19h3C5.328 19 6 18.328 6 17.5zM7.5 26c-.414.0-.789.168-1.061.439l-2 2C4.168 28.711 4 29.086 4 29.5 4 30.328 4.671 31 5.5 31c.414.0.789-.168 1.06-.44l2-2C8.832 28.289 9 27.914 9 27.5 9 26.672 8.329 26 7.5 26zm10-20C18.329 6 19 5.328 19 4.5v-3C19 .672 18.329.0 17.5.0S16 .672 16 1.5v3C16 5.328 16.671 6 17.5 6zm10 3c.414.0.789-.168 1.06-.439l2-2C30.832 6.289 31 5.914 31 5.5 31 4.672 30.329 4 29.5 4c-.414.0-.789.168-1.061.44l-2 2C26.168 6.711 26 7.086 26 7.5 26 8.328 26.671 9 27.5 9zM6.439 8.561C6.711 8.832 7.086 9 7.5 9 8.328 9 9 8.328 9 7.5c0-.414-.168-.789-.439-1.061l-2-2C6.289 4.168 5.914 4 5.5 4 4.672 4 4 4.672 4 5.5c0 .414.168.789.439 1.06l2 2.001zM33.5 16h-3c-.828.0-1.5.672-1.5 1.5s.672 1.5 1.5 1.5h3c.828.0 1.5-.672 1.5-1.5S34.328 16 33.5 16zM28.561 26.439C28.289 26.168 27.914 26 27.5 26c-.828.0-1.5.672-1.5 1.5.0.414.168.789.439 1.06l2 2C28.711 30.832 29.086 31 29.5 31c.828.0 1.5-.672 1.5-1.5.0-.414-.168-.789-.439-1.061l-2-2zM17.5 29c-.829.0-1.5.672-1.5 1.5v3c0 .828.671 1.5 1.5 1.5s1.5-.672 1.5-1.5v-3C19 29.672 18.329 29 17.5 29zm0-22C11.71 7 7 11.71 7 17.5S11.71 28 17.5 28 28 23.29 28 17.5 23.29 7 17.5 7zm0 18c-4.136.0-7.5-3.364-7.5-7.5s3.364-7.5 7.5-7.5 7.5 3.364 7.5 7.5S21.636 25 17.5 25z"/></svg></label><label id=toggle-label-dark for=darkmode-toggle tabindex=-1><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="nightIcon" viewBox="0 0 100 100" style="enable-background='new 0 0 100 100'"><title>Dark Mode</title><path d="M96.76 66.458c-.853-.852-2.15-1.064-3.23-.534-6.063 2.991-12.858 4.571-19.655 4.571C62.022 70.495 50.88 65.88 42.5 57.5 29.043 44.043 25.658 23.536 34.076 6.47c.532-1.08.318-2.379-.534-3.23-.851-.852-2.15-1.064-3.23-.534-4.918 2.427-9.375 5.619-13.246 9.491-9.447 9.447-14.65 22.008-14.65 35.369.0 13.36 5.203 25.921 14.65 35.368s22.008 14.65 35.368 14.65c13.361.0 25.921-5.203 35.369-14.65 3.872-3.871 7.064-8.328 9.491-13.246C97.826 68.608 97.611 67.309 96.76 66.458z"/></svg></label></div></header><article><p class=meta>Last updated
+Unknown
+<a href=https://github.com/PetrusZ/avalon-obsidian-vault/tree/main/CS/Kubernetes/%e5%9f%ba%e4%ba%8eIstio%e7%9a%84%e9%ab%98%e7%ba%a7%e6%b5%81%e9%87%8f%e7%ae%a1%e7%90%86.md rel=noopener>Edit Source</a></p><ul class=tags></ul><aside class=mainTOC><details><summary>Table of Contents</summary><nav id=TableOfContents><ol><li><a href=#evolution>Evolution</a></li><li><a href=#从单块系统到微服务系统的演进>从单块系统到微服务系统的演进</a></li><li><a href=#微服务架构的演进>微服务架构的演进</a></li><li><a href=#典型的微服务业务场景>典型的微服务业务场景</a></li><li><a href=#更完整的微服务架构>更完整的微服务架构</a></li><li><a href=#系统边界>系统边界</a></li></ol><ol><li><a href=#sidecar-的工作原理>Sidecar 的工作原理</a></li><li><a href=#service-mesh>Service Mesh</a></li><li><a href=#微服务的优劣>微服务的优劣</a></li><li><a href=#服务网格可选方案>服务网格可选方案</a></li><li><a href=#什么是服务网格>什么是服务网格</a></li><li><a href=#为什么要使用-istio>为什么要使用 Istio</a></li><li><a href=#istio-功能概览>Istio 功能概览</a></li><li><a href=#流量管理>流量管理</a></li><li><a href=#安全>安全</a></li><li><a href=#可观察性>可观察性</a></li><li><a href=#istio-架构演进>Istio 架构演进</a></li><li><a href=#设计目标>设计目标</a></li></ol><ol><li><a href=#主流七层代理的比较>主流七层代理的比较</a></li><li><a href=#envoy的优势>Envoy的优势</a></li><li><a href=#envoy-线程模式>Envoy 线程模式</a></li><li><a href=#envoy-架构>Envoy 架构</a></li><li><a href=#v1-api的缺点和v2的引入>v1 API的缺点和v2的引入</a></li><li><a href=#xds--envoy-的发现机制>xDS- Envoy 的发现机制</a></li><li><a href=#envoy-的过滤器模式>Envoy 的过滤器模式</a></li><li><a href=#isito流量管理>Isito流量管理</a></li><li><a href=#流量管理-1>流量管理</a></li><li><a href=#istio-的流量劫持机制>Istio 的流量劫持机制</a></li><li><a href=#init-container>Init container</a></li><li><a href=#sidecar-containe>Sidecar containe</a></li><li><a href=#流量管理-2>流量管理</a></li><li><a href=#请求路由>请求路由</a></li><li><a href=#服务之间的通讯>服务之间的通讯</a></li><li><a href=#ingress-和-egress>Ingress 和 Egress</a></li><li><a href=#服务发现和负载均衡>服务发现和负载均衡</a></li><li><a href=#故障处理>故障处理</a></li><li><a href=#微调>微调</a></li><li><a href=#故障注入>故障注入</a></li><li><a href=#规则配置>规则配置</a></li><li><a href=#virtualservice>VirtualService</a></li><li><a href=#规则的目标描述>规则的目标描述</a></li><li><a href=#在服务之间分拆流量>在服务之间分拆流量</a></li><li><a href=#超时和重试>超时和重试</a></li><li><a href=#错误注入>错误注入</a></li><li><a href=#条件规则>条件规则</a></li><li><a href=#流量镜像>流量镜像</a></li><li><a href=#规则委托>规则委托</a></li><li><a href=#优先级>优先级</a></li><li><a href=#目标规则>目标规则</a></li><li><a href=#断路器>断路器</a></li><li><a href=#serviceentry>ServiceEntry</a></li><li><a href=#workloadentry>WorkloadEntry</a></li><li><a href=#gateway>Gateway</a></li><li><a href=#开启网关安全加固>开启网关安全加固</a></li><li><a href=#遥测-telemetry-v2>遥测（ Telemetry V2）</a></li><li><a href=#多集群网格扩展>多集群网格扩展</a></li></ol><ol><li><a href=#跟踪采样配置>跟踪采样配置</a></li><li><a href=#应用程序埋点>应用程序埋点</a></li><li><a href=#service-mesh-涉及的网络栈>Service Mesh 涉及的网络栈</a></li><li><a href=#cilium-数据平面加速>Cilium 数据平面加速</a></li><li><a href=#小结>小结</a></li></ol></nav></details></aside><a href=#微服务架构的演变><h1 id=微服务架构的演变><span class=hanchor arialabel=Anchor># </span>微服务架构的演变</h1></a><a href=#evolution><h2 id=evolution><span class=hanchor arialabel=Anchor># </span>Evolution</h2></a><p><img src=https://obsidian.codeplayer.org//../../assets/image_1667232096191_0.png width=auto alt=image.png></p><p><img src=https://obsidian.codeplayer.org//../../assets/image_1667232110413_0.png width=auto alt=image.png></p><a href=#从单块系统到微服务系统的演进><h2 id=从单块系统到微服务系统的演进><span class=hanchor arialabel=Anchor># </span>从单块系统到微服务系统的演进</h2></a><p><img src=https://obsidian.codeplayer.org//../../assets/image_1667232153471_0.png width=auto alt=image.png></p><a href=#微服务架构的演进><h2 id=微服务架构的演进><span class=hanchor arialabel=Anchor># </span>微服务架构的演进</h2></a><p><img src=https://obsidian.codeplayer.org//../../assets/image_1667232200200_0.png width=auto alt=image.png></p><a href=#典型的微服务业务场景><h2 id=典型的微服务业务场景><span class=hanchor arialabel=Anchor># </span>典型的微服务业务场景</h2></a><p><img src=https://obsidian.codeplayer.org//../../assets/image_1667232226792_0.png width=auto alt=image.png></p><a href=#更完整的微服务架构><h2 id=更完整的微服务架构><span class=hanchor arialabel=Anchor># </span>更完整的微服务架构</h2></a><p><img src=https://obsidian.codeplayer.org//../../assets/image_1667232293928_0.png width=auto alt=image.png></p><a href=#系统边界><h2 id=系统边界><span class=hanchor arialabel=Anchor># </span>系统边界</h2></a><p><img src=https://obsidian.codeplayer.org//../../assets/image_1667232353905_0.png width=auto alt=image.png></p><a href=#微服务到服务网格还缺什么><h1 id=微服务到服务网格还缺什么><span class=hanchor arialabel=Anchor># </span>微服务到服务网格还缺什么?</h1></a><a href=#sidecar-的工作原理><h2 id=sidecar-的工作原理><span class=hanchor arialabel=Anchor># </span>Sidecar 的工作原理</h2></a><p><img src=https://obsidian.codeplayer.org//../../assets/image_1667232736020_0.png width=auto alt=image.png></p><a href=#service-mesh><h2 id=service-mesh><span class=hanchor arialabel=Anchor># </span>Service Mesh</h2></a><p><img src=https://obsidian.codeplayer.org//../../assets/image_1667232759244_0.png width=auto alt=image.png></p><p><strong>适应性</strong></p><ul><li>熔断</li><li>重试</li><li>超时处理</li><li>失败处理</li><li>负载均衡</li><li>Failover</li></ul><p><strong>服务发现</strong></p><ul><li>路由</li></ul><p><strong>安全和访问控制</strong></p><ul><li>TLS和证书管理</li></ul><p><strong>可观察行</strong></p><ul><li>Metrics</li><li>监控</li><li>分布式日志</li><li>分布式tracing</li></ul><p><strong>部署</strong></p><ul><li>容器</li></ul><p><strong>通讯</strong></p><ul><li>HTTP</li><li>WS</li><li>gRPC</li><li>TCP</li></ul><a href=#微服务的优劣><h2 id=微服务的优劣><span class=hanchor arialabel=Anchor># </span>微服务的优劣</h2></a><p><strong>优势</strong></p><ul><li>将基础架构逻辑从业务代码中剥离出来<ul><li>分布式 tracing</li><li>日志</li></ul></li><li>自由选择技术栈</li><li>帮助业务开发部门只关注业务逻辑</li></ul><p><strong>劣势</strong></p><ul><li>复杂<ul><li>更多的运行实例</li></ul></li><li>可能带来额外的网络跳转<ul><li>每个服务调用都要经过 Sidecar</li></ul></li><li>解决了一部分问题，同时要付出代价<ul><li>依然要处理复杂路由，类型映射，与外部系统整合等方面问题</li></ul></li><li>不解决业务逻辑或服务整合，服务组合等问题</li></ul><a href=#服务网格可选方案><h2 id=服务网格可选方案><span class=hanchor arialabel=Anchor># </span>服务网格可选方案</h2></a><p><img src=https://obsidian.codeplayer.org//../../assets/image_1667234149779_0.png width=auto alt=image.png></p><a href=#什么是服务网格><h2 id=什么是服务网格><span class=hanchor arialabel=Anchor># </span>什么是服务网格</h2></a><p><strong>服务网格（Service Mesh）这个术语通常用于描述构成这些应用程序的微服务网络以及应用之间的交互。</strong> 随着规模和复杂性的增长，服务网格越来越难以理解和管理。</p><p>它的需求包括服务发现、负载均衡、故障恢复、指标收集和监控以及通常更加复杂的运维需求例如 A/B 测试、金丝雀发布、限流、访问控制和端到端认证等。</p><p><img src=https://obsidian.codeplayer.org//../../assets/image_1667236455656_0.png width=auto alt=image.png></p><a href=#为什么要使用-istio><h2 id=为什么要使用-istio><span class=hanchor arialabel=Anchor># </span>为什么要使用 Istio</h2></a><p><strong>HTTP、gRPC、WebSocket 和 TCP</strong>流量的自动负载均衡。</p><p>通过丰富的路由规则、重试、故障转移和故障注入，可以对流量行为进行细粒度控制。</p><p>可插入的策略层和配置 API，支持访问控制、速率限制和配额。</p><p>对出入集群入口和出口中所有流量的自动度量指标、日志记录和跟踪。</p><p>通过强大的基于身份的验证和授权，在集群中实现安全的服务间通信。</p><a href=#istio-功能概览><h2 id=istio-功能概览><span class=hanchor arialabel=Anchor># </span>Istio 功能概览</h2></a><p><img src=https://obsidian.codeplayer.org//../../assets/image_1667236582525_0.png width=auto alt=image.png></p><a href=#流量管理><h2 id=流量管理><span class=hanchor arialabel=Anchor># </span>流量管理</h2></a><p><strong>连接</strong></p><p>通过简单的规则配置和流量路由，可以控制服务之间的流量和 API调用。Istio 简化了断路器，超时和重试等服务级别属性的配置，并且可以轻松设置 A/B 测试、金丝雀部署和基于百分比的流量分割的分阶段部署等重要任务。</p><p><strong>控制</strong></p><p>通过更好地了解流量和开箱即用的故障恢复功能，可以在问题出现之前先发现问题，使调用更可靠，并且使您的网络更加强大——无论您面临什么条件。</p><a href=#安全><h2 id=安全><span class=hanchor arialabel=Anchor># </span>安全</h2></a><p><strong>开发人员可以专注于应用程序级别的安全性。</strong> Istio 提供底层安全通信信道，并大规模管理服务通信的认证、授权和加密。使用Istio，服务通信在默认情况下是安全的，它允许跨多种协议和运行时一致地实施策略所有这些都很少或根本不需要应用程序更改。</p><p><strong>虽然Istio 与平台无关，但将其与Kubernetes（或基础架构）网络策略结合使用，其优势会更大，包括在网络和应用层保护 Pod 间或服务间通信的能力。</strong></p><a href=#可观察性><h2 id=可观察性><span class=hanchor arialabel=Anchor># </span>可观察性</h2></a><p>Istio 生成以下类型的遥测数据，以提供对整个服务网格的可观察性∶</p><p>指标：Istio 基于4个监控的黄金标识（延迟、流量、错误、饱和）生成了一系列服务指标。Istio 还为网格控制平面提供了更详细的指标。除此以外还提供了一组默认的基干这些指标的网格监控仪表板。</p><p>分布式追踪：Istio 为每个服务生成分布式追踪 span，运维人员可以理解网格内服务的依赖和调用流程。</p><p>访问日志：当流量流入网格中的服务时，Istio 可以生成每个请求的完整记录，包括源和目标的元数据。此信息使运维人员能够将服务行为的审查控制到单个工作负载实例的级别。</p><p><strong>所有这些功能可以更有效地设置、监控和实施服务上的 SLO，快速有效地检测和修复问题。</strong></p><a href=#istio-架构演进><h2 id=istio-架构演进><span class=hanchor arialabel=Anchor># </span>Istio 架构演进</h2></a><ul><li>数据平面<ul><li>由一组以Sidecar方式部署的智能代理（Envoy）组成。这些代理可以调节和控制微服务及Mixer之所有的网络通信。</li></ul></li><li>控制平面<ul><li>负责管理和配置代理来路由流量。此外控制平面配置 Mixer 以实施策略和收集遥测数据。</li></ul></li><li>架构演进<ul><li>从微服务回归单体</li></ul></li></ul><p><img src=https://obsidian.codeplayer.org//../../assets/image_1667237338403_0.png width=auto alt=image.png></p><a href=#设计目标><h2 id=设计目标><span class=hanchor arialabel=Anchor># </span>设计目标</h2></a><p><strong>最大化透明度</strong></p><ul><li>Istio 将自身自动注入到服务间所有的网络路径中，运维和开发人员只需付出很少的代价就可以从中受益。</li><li>Istio 使用 Sidecar 代理来捕获流量，并且在尽可能的地方自动编程网络层，以路由流量通过这些代理，而无需对已部署的应用程序代码进行任何改动。</li><li>在Kubernetes中，代理被注入到 Pod中，通过编写iptables规则来捕获流量。注入 Sidecar 代理到Pod 中并且修改路由规则后，Istio 就能够调解所有流量。</li><li>所有组件和 API在设计时都必须考虑性能和规模。</li></ul><p><strong>增量</strong></p><ul><li>预计最大的需求是扩展策略系统，集成其他策略和控制来源，并将网格行为信号传播到其他系统进行分析。策略运行时支持标准扩展机制以便插入到其他服务中。</li></ul><p><strong>可移植性</strong></p><ul><li>将基于 Istio 的服务移植到新环境应该是轻而易举的，而使用 Istio 将一个服务同时部署到多个环境中也是可行的（例如，在多个云上进行冗余部署）。</li></ul><p><strong>策略一致性</strong></p><ul><li>在服务间的 API调用中，策略的应用使得可以对网格间行为进行全面的控制，但对于无需在 API级别表达的资源来说，对资源应用策略也同样重要。</li><li>因此，策略系统作为独特的服务来维护，具有自己的 API，而不是将其放到代理/sidecar 中，这容许服 务根据需要直接与其集成。</li></ul><a href=#深入理解数据平面envoy><h1 id=深入理解数据平面envoy><span class=hanchor arialabel=Anchor># </span>深入理解数据平面Envoy</h1></a><a href=#主流七层代理的比较><h2 id=主流七层代理的比较><span class=hanchor arialabel=Anchor># </span>主流七层代理的比较</h2></a><p><img src=https://obsidian.codeplayer.org//../../assets/image_1667237802067_0.png width=auto alt=image.png></p><a href=#envoy的优势><h2 id=envoy的优势><span class=hanchor arialabel=Anchor># </span>Envoy的优势</h2></a><p><strong>性能：</strong></p><p>在具备大量特性的同时，Envoy 提供极高的吞吐量和低尾部延迟差异，而CPU 和 RAM消耗却相对较少。</p><p><strong>可扩展性：</strong></p><p>Envoy 在 L4和L7都提供了丰富的可插拔过滤器能力，使用户可以轻松添加 开源版本中没有的功能。</p><p><strong>API可配置性：</strong></p><p>Envoy提供了一组可以通过控制平面服务实现的管理 API。如果控制平面实现所有的 API，则可以使用通用引导配置在整个基础架构上运行Envoy。所有进一步的配置更改通过管理服务器以无缝方式动态传送，因此 EnvoV从不需要重新启动。这使得EnvoV成为通用数据平面当它与一个足够复杂的控制平面相结合时，会极大的降低整体运维的复杂性。</p><a href=#envoy-线程模式><h2 id=envoy-线程模式><span class=hanchor arialabel=Anchor># </span>Envoy 线程模式</h2></a><ul><li><strong>Envoy 采用单进程多线程模式：</strong><ul><li>主线程负责协调；</li><li>子线程负责监听过滤和转发。</li></ul></li><li>当某连接被监听器接受，那么该连接的全部生命周期会与某线程绑定。</li><li>Envoy基于非阻塞模式（Epoll）。</li><li><strong>建议 Envoy 配置的 worker数量与 Envoy所在的硬件线程数一致。</strong></li></ul><a href=#envoy-架构><h2 id=envoy-架构><span class=hanchor arialabel=Anchor># </span>Envoy 架构</h2></a><p><img src=https://obsidian.codeplayer.org//../../assets/image_1667239065136_0.png width=auto alt=image.png></p><a href=#v1-api的缺点和v2的引入><h2 id=v1-api的缺点和v2的引入><span class=hanchor arialabel=Anchor># </span>v1 API的缺点和v2的引入</h2></a><p><strong>v1 API仅使用 JSON/REST，本质上是轮询。</strong> 这有几个缺点∶</p><p>尽管Envoy在内部使用的是 JSON 模式，但 API本身并不是强类型，而且安全实现它们的通用服务器也很难。</p><p>虽然轮询工作在实践中是很正常的用法，但更强大的控制平面更喜欢 streaming API，当其就绪后，可以将更新推送给每个EnvoV。这可以将更新传播时间从 30-60秒降低到250-500 毫秒，即使在极其庞大的部署中也是如此。</p><p><strong>v2 API具有以下属性∶</strong></p><p>新的 API模式使用 proto3指定，并同时以gRPC和 REST+JSON/YAML端点实现。</p><p>它们被定义在一个名为 envoy-api的新的专用源代码仓库中。proto3的使用意味着这些 API是强类型的，同时仍然通过 proto3的JSON/YAML 表示来支持JSON/YAML变体。</p><p>专用存储仓库的使用意味着项目可以更容易的使用 API并用 gRPC支持的所有语言生成存根（<strong>实际上，对于希望使用它的用户，我们将继续支持基于REST 的JSON/YAML 变体）。</strong></p><a href=#xds--envoy-的发现机制><h2 id=xds--envoy-的发现机制><span class=hanchor arialabel=Anchor># </span>xDS- Envoy 的发现机制</h2></a><p><strong>Endpoint Discovery Service (EDS):</strong></p><p>这是 v1 SDS API的替代品。此外，gRPC的双向流性质将允许将负载/健康信息报告回管理服务器，为将来的全局负载均衡功能开启大门。</p><p><strong>Cluster Discovery Service (CDS):</strong></p><p>和V1 没有实质性变化。</p><p><strong>Route Discovery Service (RDS):</strong></p><p>和V1没有实质性变化。</p><p><strong>Listener Discovery Service (LDS):</strong></p><p>和v1 的唯一主要变化是∶现在允许监听器定义多个并发过滤栈，这些过滤栈可以基于一组监听器路由规则（例如，SNI，源/目的地IP 匹配等）来选择。这是处理"原始目的地"策略路由的更简洁的方式，这种路由是透明数据平面解决方案（如 Istio）所需要的。</p><p><strong>Secret Discovery Service (SDS):</strong></p><p>一个专用的 API来传递TLS密钥材料。这将解耦通过 LDS/CDS发送主要监听器、集群配置和通过专用密钥管理系统发送秘钥素材。</p><p><strong>Health Discovery Service (HDS):</strong></p><p>该 API将允许Envoy成为分布式健康检查网络的成员。中央健康检查服务可以使用一组Envoy作为健康检查终点并将状态报告回来，从而缓解 N健康检查问题，这个问题指的是其间的每个Envoy 都可能需要对每个其他 Envoy 进行健康检查。</p><p><strong>Aggregated Discovery Service (ADS):</strong></p><p>总的来说，Envoy的设计是最终一致的。这意味着默认情况下，每个管理API都并发运行，并且不会相互交互。在某些情况下，一次一个管理服务器处理单个Envoy的所有更新是有益的（例如，如果需要对更新进行排序以避免流量下降）。此 API允许通过单个管理服务器的单个gRPC 双向流对所有其他 API进行编组，从而实现确定性排序。</p><a href=#envoy-的过滤器模式><h2 id=envoy-的过滤器模式><span class=hanchor arialabel=Anchor># </span>Envoy 的过滤器模式</h2></a><p><img src=https://obsidian.codeplayer.org//../../assets/image_1667239733328_0.png width=auto alt=image.png></p><a href=#isito流量管理><h2 id=isito流量管理><span class=hanchor arialabel=Anchor># </span>Isito流量管理</h2></a><a href=#流量管理-1><h2 id=流量管理-1><span class=hanchor arialabel=Anchor># </span>流量管理</h2></a><ul><li>Gateway</li><li>VirtualService</li><li>DestinationRule</li><li>ServieEntry</li><li>WorkloadEntry</li><li>Sidecar</li></ul><a href=#istio-的流量劫持机制><h2 id=istio-的流量劫持机制><span class=hanchor arialabel=Anchor># </span>Istio 的流量劫持机制</h2></a><p><strong>为用户应用注入Sidecar</strong></p><ul><li>自动注入</li><li>手动注入<ul><li>istioctl kube-inject -f yaml/istio-bookinfo/bookinfo.yaml</li></ul></li></ul><p><strong>注入后的结果</strong></p><ul><li>注入了 init-container istio-init<ul><li><code>istio-iptables -p 15001-z15006-u 1337-m REDIRECT -i * -x -b 9080-d 15090,15021,15020</code></li></ul></li><li>注入了 sidecar container istio-proxy</li></ul><p><img src=https://obsidian.codeplayer.org//../../assets/image_1667293416806_0.png width=auto alt=image.png></p><a href=#init-container><h2 id=init-container><span class=hanchor arialabel=Anchor># </span>Init container</h2></a><p><strong>将应用容器的所有流量都转发到Envoy的15001端口。</strong></p><p>使用 istio-proxy 用户身份运行，UID为1337，即Envoy所处的用户空间，这也是istio-proxy容器默认使用的用户，见YAML配置中的runAsUser字段。</p><p>使用默认的REDIRECT模式来重定向流量。</p><p>将所有出站流量都重定向到Envoy代理。</p><p>将所有访问9080端口（即应用容器productpage的端口）的流量重定向到Envoy代理。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>//所有入站TCP流量走ISTIO_INBOUND
+</span></span><span class=line><span class=cl>-A PREROUTING-P tcp-j ISTIO_INBOUND
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>//所有出站TCP流量走ISTIO_OUTPUT
+</span></span><span class=line><span class=cl>-A OUTPUT-P tcp-j ISTIO  OUTPUT
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>//忽略ssh，health check等端口
+</span></span><span class=line><span class=cl>-A ISTIO_INBOUND-p tcp-m tcp--dport 22-j RETURN
+</span></span><span class=line><span class=cl>-A ISTIO_INBOUND-p tcp-m tcp--dport 15090-j RETURN
+</span></span><span class=line><span class=cl>-A ISTIO_INBOUND-p tcp-m tcp--dport 15021-j RETURN
+</span></span><span class=line><span class=cl>-A ISTIO INBOUND-p tcp-m tcp--dport 15020-j RETURN
+</span></span><span class=line><span class=cl>//所有入站TCP流量走ISTIO_IN_REDIRECT
+</span></span><span class=line><span class=cl>-A ISTIO_INBOUND-P tcp-j ISTIO_IN_REDIRECT
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>//TCP流量转发至15006端口
+</span></span><span class=line><span class=cl>-AISTIO_IN_REDIRECT-p tcp-j REDIRECT--to-ports 15006
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>//loopback passthrough
+</span></span><span class=line><span class=cl>-A ISTIO OUTPUT-S 127.0.0.6/32-o lo-j RETURN
+</span></span><span class=line><span class=cl>//从loopback口出来，目标非本机地址，owner是envoy，交由ISTIO_IN_REDIRECT处理
+</span></span><span class=line><span class=cl>-A ISTIO OUTPUT!-d 127.0.0.1/32-o lo-m owner--uid-owner 1337-j ISTIO_IN_REDIRECT
+</span></span><span class=line><span class=cl>//从lo口出来，owner非envoy，return
+</span></span><span class=line><span class=cl>-A ISTIO_OUTPUT-o lo -m owner!--uid-owner 1337-j RETURN
+</span></span><span class=line><span class=cl>//owner是envoy，return
+</span></span><span class=line><span class=cl>-A ISTIO_OUTPUT-m owner--uid-owner 1337-j RETURN
+</span></span><span class=line><span class=cl>-A ISTIO OUTPUT!-d 127.0.0.1/32-o lo-m owner--gid-owner 1337-j ISTIO_IN_REDIRECT
+</span></span><span class=line><span class=cl>-A ISTIO_OUTPUT-o lo-m owner!--gid-owner 1337-j RETURN
+</span></span><span class=line><span class=cl>-A ISTIO OUTPUT-m owner--gid-owner 1337-j RETURN
+</span></span><span class=line><span class=cl>-A ISTIO OUTPUT-d 127.0.0.1/32-j RETURN
+</span></span><span class=line><span class=cl>//如以上规则都不匹配，则交给ISTIO REDIRECT处理
+</span></span><span class=line><span class=cl>-A ISTIO_OUTPUT-j ISTIO_REDIRECT
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>-A ISTIO_REDIRECT-p tcp -j REDIRECT --to-ports 15001
+</span></span></code></pre></td></tr></table></div></div><a href=#sidecar-containe><h2 id=sidecar-containe><span class=hanchor arialabel=Anchor># </span>Sidecar containe</h2></a><p><strong>Istio会生成以下监听器：</strong></p><ul><li>0.0.0.0∶15001上的监听器接收进出Pod的所有流量，然后将请求移交给虚拟监听器。</li><li>每个service IP一个虚拟监听器，每个出站TCP/HTTPS流量一个非HTTP监听器。</li><li>每个Pod入站流量暴露的端口一个虚拟监听器。</li><li>每个出站HTTP流量的HTTP 0.0.0.0端口一个虚拟监听器。</li></ul><p><code>istioctl proxy-config listeners productpage-v1-8b96c8794-bttdd -n bookinfo--port 15001-ojson</code></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&#34;name&#34;</span><span class=p>:</span> <span class=s2>&#34;virtual&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&#34;address&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;socketAddress&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=nt>&#34;address&#34;</span><span class=p>:</span> <span class=s2>&#34;0.0.0.0&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=nt>&#34;portValue&#34;</span><span class=p>:</span> <span class=mi>15001</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>},</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&#34;filterChains&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=nt>&#34;filters&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>                <span class=p>{</span>
+</span></span><span class=line><span class=cl>                    <span class=nt>&#34;name&#34;</span><span class=p>:</span> <span class=s2>&#34;envoy.tcp_proxy&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                    <span class=nt>&#34;config&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>                        <span class=nt>&#34;cluster&#34;</span><span class=p>:</span> <span class=s2>&#34;BlackHoleCluster&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                        <span class=nt>&#34;stat_prefix&#34;</span><span class=p>:</span> <span class=s2>&#34;BlackHoleCluster&#34;</span>
+</span></span><span class=line><span class=cl>                    <span class=p>}</span>
+</span></span><span class=line><span class=cl>                <span class=p>}</span>
+</span></span><span class=line><span class=cl>            <span class=p>]</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>],</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&#34;useOriginalDst&#34;</span><span class=p>:</span> <span class=kc>true</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><hr><p>**我们的请求是到9080 端口的 HTTP 出站请求，这意味着它被切换到 0.0.0.0∶9080虚拟监听器。**然后，此监听器在其配置的RDS中香找路由配置。在这种情 况下，它将查我由 Pilot 配置的 RDS中的路由9080（通过ADS）。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>netstat -nalgrep LISTEN
+</span></span><span class=line><span class=cl>tcp  <span class=m>0</span> <span class=m>0</span>    127.0.0.1:15000 0.0.0.0:*   LISTEN
+</span></span><span class=line><span class=cl>tcp  <span class=m>0</span> <span class=m>0</span>    0.0.0.0.15001   0.0.0.0:*   LISTEN
+</span></span><span class=line><span class=cl>tcp6 <span class=m>0</span> <span class=m>0</span>    ::9080          :::*        LISTEN
+</span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=line><span class=cl><span class=s2>&#34;rds&#34;</span><span class=err>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&#34;config_source&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;ads&#34;</span><span class=p>:</span> <span class=p>{}</span>
+</span></span><span class=line><span class=cl>    <span class=p>},</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&#34;route_config name&#34;</span><span class=p>:</span> <span class=s2>&#34;9080&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><hr><p><strong>9080路由配置仅为每个服务提供虚拟主机。</strong> 我们的请求正在前往 reviews 服务，因此 Envoy 将选择我们的请求与域匹配的虚拟主机。一旦在域上匹配，Envoy会查找与请求匹配的第一条路径。在这种情况下，我们没有任何高级路由，因此只有一条路由匹配所有内容。</p><p>这条路由告诉Envoy将请求发送到outbound[9080]lreviews.default.svc.cluster.local 集群。</p><p><code>istioctl proxy-config routes productpage-v1-8b96c8794-bttdd --name 9080 -o json -n bookinfo</code></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&#34;name&#34;</span><span class=p>:</span> <span class=s2>&#34;9080&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&#34;virtualHosts&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=nt>&#34;name&#34;</span><span class=p>:</span> <span class=s2>&#34;reviews.bookinfo.svc.cluster.local:9080&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=nt>&#34;domains&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;reviews.bookinfo.svc.cluster.local&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;reviews.bookinfo.svc.cluster.local:9080&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;reviews&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;reviews:9080&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;reviews.bookinfo.svc.cluster&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;reviews.bookinfo.svc.cluster:9080&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;reviews.bookinfo.svc&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;reviews.bookinfo.svc:9080&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;reviews.bookinfo&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;reviews.bookinfo:9080&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;192.168.143.232&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;192.168.143.232:9080&#34;</span>
+</span></span><span class=line><span class=cl>            <span class=p>],</span>
+</span></span><span class=line><span class=cl>            <span class=nt>&#34;routes&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>                <span class=p>{</span>
+</span></span><span class=line><span class=cl>                    <span class=nt>&#34;match&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>                        <span class=nt>&#34;prefix&#34;</span><span class=p>:</span> <span class=s2>&#34;/&#34;</span>
+</span></span><span class=line><span class=cl>                    <span class=p>},</span>
+</span></span><span class=line><span class=cl>                    <span class=nt>&#34;route&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>                        <span class=nt>&#34;cluster&#34;</span><span class=p>:</span> <span class=s2>&#34;outbound|9080]lreviews.bookinfo.svc.cluster.local&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                        <span class=nt>&#34;timeout&#34;</span><span class=p>:</span> <span class=s2>&#34;0.000s&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                        <span class=nt>&#34;maxGrpcTimeout&#34;</span><span class=p>:</span> <span class=s2>&#34;0.000s&#34;</span>
+</span></span><span class=line><span class=cl>                    <span class=p>}</span>
+</span></span><span class=line><span class=cl>                <span class=p>}</span>
+</span></span><span class=line><span class=cl>            <span class=p>]</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>]</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><hr><p><strong>此集群配置为从 Pilot（通过 ADS）检索关联的端点。</strong> 因此，Envoy 将使用 serviceName字段作</p><p>为密钥来查找端点列表并将请求代理到其中一个端点。</p><p><code>istioctl proxy-config clusters productpage-v1-8b96c8794-bttdd --fqdn reviews.bookinfo.svc.cluster.local -n bookinfo-ojson</code></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&#34;name&#34;</span><span class=p>:</span> <span class=s2>&#34;outbound|9080l|reviews.bookinfo.svc.cluster.local&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&#34;type&#34;</span><span class=p>:</span> <span class=s2>&#34;EDS&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&#34;edsclusterConfig&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;edsConfig&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=nt>&#34;ads&#34;</span><span class=p>:</span> <span class=p>{}</span>
+</span></span><span class=line><span class=cl>        <span class=p>},</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;serviceName&#34;</span><span class=p>:</span> <span class=s2>&#34;outbound|9080|lreviews.bookinfo.svc.cluster.local&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;connectTimeout&#34;</span><span class=p>:</span> <span class=s2>&#34;1.000s&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;circuitBreakers&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=nt>&#34;thresholds&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>                <span class=p>{}</span>
+</span></span><span class=line><span class=cl>            <span class=p>]</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#流量管理-2><h2 id=流量管理-2><span class=hanchor arialabel=Anchor># </span>流量管理</h2></a><p><img src=https://obsidian.codeplayer.org//../../assets/image_1667296531856_0.png width=auto alt=image.png></p><a href=#请求路由><h2 id=请求路由><span class=hanchor arialabel=Anchor># </span>请求路由</h2></a><p><strong>特定网格中服务的规范表示由 Pilot 维护。</strong> 服务的 Istio 模型和在底层平台（Kubernetes、Mesos以及 Cloud Foundrv 等）中的表达无关。特定平台的适配器负责从各自平台中获取元数据的各种字段，然后对服务模型进行填充。</p><p><strong>Istio 引入了服务版本的概念，可以通过版本（v1、v2）或环境（staging、prod）对服务进行进一步的细分。</strong> 这些版本不一定是不同的 API版本∶它们可能是部署在不同环境（prod、staging或者 dev 等）中的同一服务的不同迭代。使用这种方式的常见场景包括A/B测试或金丝雀部署。</p><p><strong>Istio 的流量路由规则可以根据服务版本来对服务之间流量进行附加控制。</strong></p><a href=#服务之间的通讯><h2 id=服务之间的通讯><span class=hanchor arialabel=Anchor># </span>服务之间的通讯</h2></a><p><strong>服务的客户端不知道服务不同版本间的差异。</strong> 它们可以使用服务的主机名或者 IP地址继续访问服务。Envoy sidecar/ 代理拦截并转发客户端和服务器之间的所有请求和响应。</p><p>Istio 还为同一服务版本的多个实例提供流量负载均衡。可以在服务发现和负载均衡中找到更多信息。</p><p>Istio 不提供 DNS。<strong>应用程序可以尝试使用底层平台（kube-dns、mesos-dns 等）中存在的DNS服务来解析 FQDN。</strong></p><a href=#ingress-和-egress><h2 id=ingress-和-egress><span class=hanchor arialabel=Anchor># </span>Ingress 和 Egress</h2></a><p><strong>lIstio 假定进入和离开服务网络的所有流量都会通过 Envoy 代理进行传输。</strong></p><p>通过将 Envoy 代理部署在服务之前，运维人员可以针对面向用户的服务进行A/B 测试、部署金丝雀服务等。</p><p>类似地，通过使用 Envoy 将流量路由到外部 Web 服务（例如，访问 Maps API或视频服务 API）的方式，运维人员可以为这些服务添加超时控制、重试、断路器等功能.同时还能从服务连接中获取各种细节指标。</p><p><img src=https://obsidian.codeplayer.org//../../assets/image_1667296805340_0.png width=auto alt=image.png></p><a href=#服务发现和负载均衡><h2 id=服务发现和负载均衡><span class=hanchor arialabel=Anchor># </span>服务发现和负载均衡</h2></a><p><strong>Istio 负载均衡服务网格中实例之间的通信。</strong></p><p>Istio 假定存在服务注册表，以跟踪应用程序中服务的 <strong>pod/VM</strong>。它还假设服务的新实例自动注册到服务注册表，并且不健康的实例将被自动删除。诸如Kubernetes、Mesos 等平台已经为基于容器的应用程序提供了这样的功能。为基于虚拟机的应用程序提供的解决方案就更多了。</p><p>Pilot 使用来自服务注册的信息，并提供与平台无关的服务发现接口。网格中的Envoy 实例执行服务发现，并相应地动态更新其负载均衡池。</p><p>网格中的服务使用其 DNS名称访问彼此。服务的所有 HTTP流量都会通过Envoy 自动重新路由。Envoy在负载均衡池中的实例之间分发流量。<strong>虽然Envoy支持多种复杂的负载均衡算法，但Istio 目前仅允许三种负载均衡模式∶轮循、随机和带权重的最少请求。</strong></p><hr><p><strong>除了负载均衡外，Envoy 还会定期检查池中每个实例的运行状况。</strong> Envoy遵循熔断器风格模式.根据健康检查 API 调用的失败率将实例分类为不健康和健康两种。当给定实例的健康检香失败次数超过预定阈值时，将会被从负载均衡池中弹出。类似地，当通过的健康检查数超过预定阈值时，该实例将被添加回负载均衡池。您可以在处理故障中了解更多有关Envoy 的故障处理功能。</p><p><strong>服务可以通过使用 HTTP 503响应健康检查来主动减轻负担。在这种情况下，服务实例将立即从调用者的负载均衡池中删除。</strong></p><a href=#故障处理><h2 id=故障处理><span class=hanchor arialabel=Anchor># </span>故障处理</h2></a><p><img src=https://obsidian.codeplayer.org//../../assets/image_1667297029724_0.png width=auto alt=image.png></p><a href=#微调><h2 id=微调><span class=hanchor arialabel=Anchor># </span>微调</h2></a><p><strong>Istio 的流量管理规则允许运维人员为每个服务/版本设置故障恢复的全局默认值。</strong> 然而，服务的消费者也可以通过特殊的HTTP头提供的请求级别值覆盖超时和重试的默认值。在 Envoy代理的实现中，对应的Header 分别是×-envoy-upstream-rq-timeout-ms 和x-envoy-max-retries。</p><a href=#故障注入><h2 id=故障注入><span class=hanchor arialabel=Anchor># </span>故障注入</h2></a><ul><li><strong>为什么需要错误注入：</strong><ul><li>微服务架构下，需要测试端到端的故障恢复能力。</li></ul></li><li>Istio 允许在网络层面按协议注入错误来模拟错误，无需通过应用层面删除Pod，或者人为在 TCP层造成网络故障来模拟。</li><li><strong>注入的错误可以基于特定的条件，可以设置出现错误的比例∶</strong><ul><li>Delay-提高网络延时；</li><li>Aborts-直接返回特定的错误码。</li></ul></li></ul><a href=#规则配置><h2 id=规则配置><span class=hanchor arialabel=Anchor># </span>规则配置</h2></a><ul><li><strong>VirtualService</strong> 在 Istio 服务网格中定义路由规则，控制路由如何路由到服务上。</li><li><strong>DestinationRule</strong> 是VirtualService 路由生效后，配置应用与请求的策略集。</li><li><strong>ServiceEntry</strong> 是通常用于在 Istio 服务网格之外启用对服务的请求。</li><li><strong>Gateway</strong>为HTTP/TCP流量配置负载均衡器，最常见的是在网格的边缘的操作，以启用应用程序的入口流量。</li></ul><a href=#virtualservice><h2 id=virtualservice><span class=hanchor arialabel=Anchor># </span>VirtualService</h2></a><p><strong>是在 Istio 服务网格内对服务的请求如何进行路由控制。</strong></p><a href=#规则的目标描述><h2 id=规则的目标描述><span class=hanchor arialabel=Anchor># </span>规则的目标描述</h2></a><p><strong>路由规则对应着一或多个用 VirtualService 配置指定的请求目的主机。</strong> 这些主机可以是也可以不是实际的目标负载，甚至可以不是同一网格内可路由的服务。例如要给到reviews 服务的请求定义路由规则，可以使用内部的名称 reviews，也可以用域名 bookinfo.com，VirtualService 可以定义这样的host字段：</p><p>host 字段用显示或者隐式的方式定义了一或多个完全限定名（FQDN）。上面的 reviews，会隐式的扩展成为特定的 FQDN，例如在 Kubernetes 环境中，全名会从 VirtualService 所在的集群和命名空间中继承而来（比如说 reviews.default.svc.cluster.local）。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>hosts</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span>- <span class=l>reviews</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span>- <span class=l>bookinfo.com</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><a href=#在服务之间分拆流量><h2 id=在服务之间分拆流量><span class=hanchor arialabel=Anchor># </span>在服务之间分拆流量</h2></a><p>例如下面的规则会把25%的reviews 服务流量分配给v2标签；其余的75%流��量分配给v1。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>networking.istio.io/vlalpha3</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>VirtualService</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>reviews</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>hosts</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span>- <span class=l>reviews</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>http</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span>- <span class=nt>route</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- <span class=nt>destination</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>host</span><span class=p>:</span><span class=w> </span><span class=l>reviews</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>subset</span><span class=p>:</span><span class=w> </span><span class=l>v1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>weight</span><span class=p>:</span><span class=w> </span><span class=m>75</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- <span class=nt>destination</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>host</span><span class=p>:</span><span class=w> </span><span class=l>reviews</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>subset</span><span class=p>:</span><span class=w> </span><span class=l>v2</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>weight</span><span class=p>:</span><span class=w> </span><span class=m>25</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><a href=#超时和重试><h2 id=超时和重试><span class=hanchor arialabel=Anchor># </span>超时和重试</h2></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>networking.istio.io/v1alpha3</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>VirtualService</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>ratings</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>hosts</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span>- <span class=l>ratings</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>http</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span>- <span class=nt>route</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- <span class=nt>destination</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>host</span><span class=p>:</span><span class=w> </span><span class=l>ratings</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>subset</span><span class=p>:</span><span class=w> </span><span class=l>v1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>timeout</span><span class=p>:</span><span class=w> </span><span class=l>10s</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>networking.istio.io/v1alpha3</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>VirtualService</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>ratings</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>hosts</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span>- <span class=l>ratings</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>http</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span>- <span class=nt>route</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- <span class=nt>destination</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>host</span><span class=p>:</span><span class=w> </span><span class=l>ratings</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>subset</span><span class=p>:</span><span class=w> </span><span class=l>v1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>retries</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>attempts</span><span class=p>:</span><span class=w> </span><span class=m>3</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>perTryTimeout</span><span class=p>:</span><span class=w> </span><span class=l>2s</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><a href=#错误注入><h2 id=错误注入><span class=hanchor arialabel=Anchor># </span>错误注入</h2></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>networking.istio.io/v1alpha3</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>VirtualService</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>ratings</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>hosts</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span>- <span class=l>ratings</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>http</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span>- <span class=nt>fault</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>delay</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>percent</span><span class=p>:</span><span class=w> </span><span class=m>10</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>fixedDelay</span><span class=p>:</span><span class=w> </span><span class=l>5s</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>route</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- <span class=nt>destination</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>host</span><span class=p>:</span><span class=w> </span><span class=l>ratings</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>subset</span><span class=p>:</span><span class=w> </span><span class=l>v1</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>networking.istio.io/v1alpha3</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>VirtualService</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>ratings</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>hosts</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span>- <span class=l>ratings</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>http</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span>- <span class=nt>fault</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>abort</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>percent</span><span class=p>:</span><span class=w> </span><span class=m>10</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>httpStatus</span><span class=p>:</span><span class=w> </span><span class=m>400</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>route</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span>- <span class=nt>destination</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>host</span><span class=p>:</span><span class=w> </span><span class=l>ratings</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>subset</span><span class=p>:</span><span class=w> </span><span class=l>v1</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><a href=#条件规则><h2 id=条件规则><span class=hanchor arialabel=Anchor># </span>条件规则</h2></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>networking.istio.io/v1alpha3</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>VirtualService</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>productpage</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>hosts</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span>- <span class=l>productpage</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>http</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span>- <span class=nt>match</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- <span class=nt>uri</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>prefix</span><span class=p>:</span><span class=w> </span><span class=l>/api/v1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=l>...</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>networking.istio.io/v1alpha3</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>VirtualService</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=l>name:reviews</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>hosts</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span>- <span class=l>reviews</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>http</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span>- <span class=nt>match</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- <span class=nt>headers</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>end-user</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>exact</span><span class=p>:</span><span class=w> </span><span class=l>jason</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=l>...</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>networking.istio.io/v1alpha3</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>VirtualService</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>ratings</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>hosts</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span>- <span class=l>ratings</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>http</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span>- <span class=nt>match</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>sourceLabels</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>app</span><span class=p>:</span><span class=w> </span><span class=l>reviews</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nn>...</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><a href=#流量镜像><h2 id=流量镜像><span class=hanchor arialabel=Anchor># </span>流量镜像</h2></a><p>mirror 规则可以使 Envoy 截取所有 request，并在转发请求的同时，将 request 转发至
+版本 ， 同时在Mirror Header的Host/Authority加上-shadow。</p><p><strong>这些mirror请求会工作在fire and forget模式，所有的response都会被废弃。</strong></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>networking.istio.io/v1alpha3</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>VirtualService</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>httpbin</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>hosts</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span>- <span class=l>httpbin</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>http</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span>- <span class=nt>route</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- <span class=nt>destination</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>host</span><span class=p>:</span><span class=w> </span><span class=l>httpbin</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>subset</span><span class=p>:</span><span class=w> </span><span class=l>v1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>weight</span><span class=p>:</span><span class=w> </span><span class=m>100</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>mirror</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>host</span><span class=p>:</span><span class=w> </span><span class=l>httpbin</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>subset</span><span class=p>:</span><span class=w> </span><span class=l>v2</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><a href=#规则委托><h2 id=规则委托><span class=hanchor arialabel=Anchor># </span>规则委托</h2></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>networking.istio.io/v1alpha3</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>VirtualService</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>bookinfo</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>hosts</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span>- <span class=s2>&#34;bookinfo.com&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>gateways</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span>- <span class=l>mygateway</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>http</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- <span class=nt>match</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span>- <span class=nt>uri</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>prefix</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;/productpage&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>delegate</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>productpage</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>namespace</span><span class=p>:</span><span class=w> </span><span class=l>nsA</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- <span class=nt>match</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span>- <span class=nt>uri</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>prefix</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;/reviews&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>delegate</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>reviews</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>namespace</span><span class=p>:</span><span class=w> </span><span class=l>nsB</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>networking.istio.io/v1alpha3</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>VirtualService</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>productpage</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>namespace</span><span class=p>:</span><span class=w> </span><span class=l>nsA</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>http</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span>- <span class=nt>match</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- <span class=nt>uri</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>prefix</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;/productpage/v1/&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>route</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- <span class=nt>destination</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>host</span><span class=p>:</span><span class=w> </span><span class=l>productpage-v1.nsA.svc.cluster.local</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span>- <span class=nt>route</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- <span class=nt>destination</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>host</span><span class=p>:</span><span class=w> </span><span class=l>productpage.nsA.svc.cluster.local</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><a href=#优先级><h2 id=优先级><span class=hanchor arialabel=Anchor># </span>优先级</h2></a><p><strong>当对同一目标有多个规则时，会按照在 VirtualService 中的顺序进行应用，换句话说，列表中的第一条规则具有最高优先级。</strong></p><p>当对某个服务的路由是完全基于权重的时候，就可以在单一规则中完成。另一方面，如果有多重条件（例如来自特定用户的请求）用来进行路由，就会需要不止一条规则。这样就出现了优先级问题，需要通过优先级来保证根据正确的顺序来执行规则。</p><p>常见的路由模式是提供一或多个高优先级规则，这些优先规则使用源服务以及 Header 来进行路由判断，然后才提供一条单独的基于权重的规则，这些低优先级规则不设置匹配规则，仅根据权重对所有剩余流量进行分流。</p><a href=#目标规则><h2 id=目标规则><span class=hanchor arialabel=Anchor># </span>目标规则</h2></a><p><strong>在请求被VirtualService路由之后，DestinationRule配置的一系列策略就生效了。</strong></p><p>这些策略由服务属主编写，包含断路器、负载均衡以及TLS等的配置内容。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>networking.istio.io/v1alpha3</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>DestinationRule</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>reviews</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>host</span><span class=p>:</span><span class=w> </span><span class=l>reviews</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>trafficPolicy</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>loadBalancer</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>simple</span><span class=p>:</span><span class=w> </span><span class=l>RANDOM</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>subsets</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>v1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>labels</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>version</span><span class=p>:</span><span class=w> </span><span class=l>v1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>v2</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>labels</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>version</span><span class=p>:</span><span class=w> </span><span class=l>v2</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>trafficPolicy</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>loadBalancer</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>simple</span><span class=p>:</span><span class=w> </span><span class=l>ROUND_ROBIN</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>v3</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>labels</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>version</span><span class=p>:</span><span class=w> </span><span class=l>v3</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><a href=#断路器><h2 id=断路器><span class=hanchor arialabel=Anchor># </span>断路器</h2></a><p><strong>可以用一系列的标准，例如连接数和请求数限制来定义简单的断路器。</strong></p><p>可以通过定义outlierDetection自定义健康检查模式。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>networking.istio.io/v1alpha3</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>DestinationRule</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>httpbin</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>host</span><span class=p>:</span><span class=w> </span><span class=l>httpbin</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>trafficPolicy</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>connectionPool</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>tcp</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>maxConnections</span><span class=p>:</span><span class=w> </span><span class=m>1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>http</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>http1MaxPendingRequests</span><span class=p>:</span><span class=w> </span><span class=m>1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>maxRequestsPerConnection</span><span class=p>:</span><span class=w> </span><span class=m>1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>outlierDetection</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>consecutiveErrors</span><span class=p>:</span><span class=w> </span><span class=m>1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>interval</span><span class=p>:</span><span class=w> </span><span class=l>1s</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>baseEjectionTime</span><span class=p>:</span><span class=w> </span><span class=l>3m</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>maxEjectionPercent</span><span class=p>:</span><span class=w> </span><span class=m>100</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><a href=#serviceentry><h2 id=serviceentry><span class=hanchor arialabel=Anchor># </span>ServiceEntry</h2></a><p><strong>Istio 内部会维护一个服务注册表，可以用ServiceEntry向其中加入额外的条目。</strong> 通常这个对象用来启用对Istio服务网格之外的服务发出请求。</p><p>ServiceEntry中使用hosts字段来指定目标，字段值可以是一个完全限定名，也可以是个通配符域名。其中包含的白名单，包含一或多个允许网格中服务访问的服务。</p><p><strong>只要ServiceEntry涉及到了匹配host的服务，就可以和VirtualService以及DestinationRule配合工作。</strong></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>networking.istio.io/v1alpha3</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>ServiceEntry</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>foo-ext-svc</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>hosts</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span>- <span class=cp>*.foo.com</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>ports</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span>- <span class=nt>number</span><span class=p>:</span><span class=w> </span><span class=m>80</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>http</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>protocol</span><span class=p>:</span><span class=w> </span><span class=l>HTTP</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span>- <span class=nt>number</span><span class=p>:</span><span class=w> </span><span class=m>443</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>https</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>protocol</span><span class=p>:</span><span class=w> </span><span class=l>HTTPS</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><a href=#workloadentry><h2 id=workloadentry><span class=hanchor arialabel=Anchor># </span>WorkloadEntry</h2></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>networking.istio.io/v1 beta1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>ServiceEntry</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>details-svc</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>hosts</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span>- <span class=l>details.bookinfo.com</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>location</span><span class=p>:</span><span class=w> </span><span class=l>MESH_INTERNAL</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>ports</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span>- <span class=nt>number</span><span class=p>:</span><span class=w> </span><span class=m>80</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>http</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>protocol</span><span class=p>:</span><span class=w> </span><span class=l>HTTP</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>resolution</span><span class=p>:</span><span class=w> </span><span class=l>STATIC</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>workloadSelector</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>labels</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>     </span><span class=nt>app</span><span class=p>:</span><span class=w> </span><span class=l>details-legacy</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>networking.istio.io/v1beta1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>WorkloadEntry</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>details-svc</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>serviceAccount</span><span class=p>:</span><span class=w> </span><span class=l>details-legacy</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>address</span><span class=p>:</span><span class=w> </span><span class=m>2.2.2.2</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>labels</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>app</span><span class=p>:</span><span class=w> </span><span class=l>details-legacy</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>instance-id</span><span class=p>:</span><span class=w> </span><span class=l>vm1</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><a href=#gateway><h2 id=gateway><span class=hanchor arialabel=Anchor># </span>Gateway</h2></a><p><strong>Gateway 为 HTTP/TCP流量配置了一个负载均衡，多数情况下在网格边缘进行操作，用于启用一个服务的入口（ingress）流量。</strong></p><p>和Kubernetes Ingress不同，Istio Gateway只配置四层到六层的功能（例如开放端口或者TLS配置）。绑定一个VirtualService 到 Gateway上，用户就可以使用标准的 Istio 规则来控制进入的 HTTP和 TCP流量。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>networking.istio.io/v1alpha3</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>Gateway</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>bookinfo-gateway</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>servers</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span>- <span class=nt>port</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>number</span><span class=p>:</span><span class=w> </span><span class=m>443</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>https</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>protocol</span><span class=p>:</span><span class=w> </span><span class=l>HTTPS</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>hosts</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span>- <span class=l>bookinfo.com</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>tls</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>mode</span><span class=p>:</span><span class=w> </span><span class=l>SIMPLE</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>serverCertificate</span><span class=p>:</span><span class=w> </span><span class=l>/tmp/tls.crt</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>privateKey</span><span class=p>:</span><span class=w> </span><span class=l>/tmp/tls.key</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>networking.istio.io/v1alpha3</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>VirtualService</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>bookinfo</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>hosts</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span>- <span class=l>bookinfo.com</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>gateways</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span>- <span class=l>bookinfo-gateway</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>http</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span>- <span class=nt>match</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- <span class=nt>uri</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>prefix</span><span class=p>:</span><span class=w> </span><span class=l>/reviews</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>route</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=l>···</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><a href=#开启网关安全加固><h2 id=开启网关安全加固><span class=hanchor arialabel=Anchor># </span>开启网关安全加固</h2></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>networking.istio.io/v1alpha3</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>Gateway</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>bookinfo-gateway</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>servers</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span>- <span class=nt>port</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>number</span><span class=p>:</span><span class=w> </span><span class=m>443</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>https</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>protocol</span><span class=p>:</span><span class=w> </span><span class=l>HTTPS</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>hosts</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- <span class=l>bookinfo.com</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>tls</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>mode</span><span class=p>:</span><span class=w> </span><span class=l>SIMPLE</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>serverCertificate</span><span class=p>:</span><span class=w> </span><span class=l>/tmp/tls.crt</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>privateKey</span><span class=p>:</span><span class=w> </span><span class=l>/tmp/tls.key</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>networking.istio.io/v1alpha3</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>Gateway</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>bookinfo-gateway</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>servers</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span>- <span class=nt>port</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>number</span><span class=p>:</span><span class=w> </span><span class=m>443</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>https</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>protocol</span><span class=p>:</span><span class=w> </span><span class=l>HTTPS</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>hosts</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span>- <span class=l>bookinfo.com</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>tls</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>mode</span><span class=p>:</span><span class=w> </span><span class=l>SIMPLE</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>credentialName</span><span class=p>:</span><span class=w> </span><span class=l>foo</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><a href=#遥测-telemetry-v2><h2 id=遥测-telemetry-v2><span class=hanchor arialabel=Anchor># </span>遥测（ Telemetry V2）</h2></a><ul><li>基本Metrics</li><li>针对HTTP，HTTP/2和GRPC协议，Istio收集以下指标：<ul><li>Request Count(istio_requests_total)<ul><li>请总数</li></ul></li><li>Request Duration (istio_request_duration_milliseconds)<ul><li>请求处理时长</li></ul></li><li>Request Size (istio_request_bytes)<ul><li>请求包大小</li></ul></li><li>Response Size(istio_response_bytes)<ul><li>响应包大小</li></ul></li></ul></li><li>针对TCP协议，Istio收集以下指标：<ul><li>Tcp Byte Sent(istio_tcp_sent_bytes_total)<ul><li>发送的数据响应包的总大小</li></ul></li><li>Tcp Byte Received (istio_tcp_received_bytes_total)<ul><li>接收到的数据包大小</li></ul></li><li>Tcp Connections Opened(istio_tcp_connections_opened_total)<ul><li>TCP连接数</li></ul></li><li>Tcp Connections Closed(istio_tcp_connections_closed_total)<ul><li>关闭的TCP连接数</li></ul></li><li>同时支持WASM（Web Assembly）plugin收集数据<ul><li>但启用WASM后资源开销显著上升</li></ul></li></ul></li></ul><a href=#多集群网格扩展><h2 id=多集群网格扩展><span class=hanchor arialabel=Anchor># </span>多集群网格扩展</h2></a><p>基于 Gateway</p><p><img src=https://obsidian.codeplayer.org//../../assets/image_1667311524904_0.png width=auto alt=image.png></p><p>基于VPN 或可互通的集群</p><p><img src=https://obsidian.codeplayer.org//../../assets/image_1667311572370_0.png width=auto alt=image.png></p><a href=#跟踪采样><h1 id=跟踪采样><span class=hanchor arialabel=Anchor># </span>跟踪采样</h1></a><a href=#跟踪采样配置><h2 id=跟踪采样配置><span class=hanchor arialabel=Anchor># </span>跟踪采样配置</h2></a><p>**lstio 默认捕获所有请求的跟踪。**例如，何时每次访问时都使用上面的 Bookinfo 示例应用程序/productpage 你在Jaeger 看到了相应的痕迹仪表板。此采样率适用于测试或低流量目。</p><p>在运行的网格中，编辑 istio-pilot 部署并使用以下步骤更改环境变量∶</p><p><code>istioctl upgrade --set values.global.tracer.zipkin.address=jaeger-collector:9417</code></p><a href=#应用程序埋点><h2 id=应用程序埋点><span class=hanchor arialabel=Anchor># </span>应用程序埋点</h2></a><p>**虽然Istio代理能够自动发送 Span信息，但还是需要一些辅助手段来把整个跟踪过程统一起来。**应用程序应该自行传播跟踪相关的HTTP Header，这样在代理发送Span 信息的时候，才能正确的把同一个跟踪过程统一起来。</p><p>为了完成跟踪的传播过程，应用应该从请求源头中收集下列的HTTP Header，并传播给外发请求∶</p><ul><li>x-request-id</li><li>x-b3-traceid</li><li>x-b3-spanid</li><li>x-b3-parentspanid</li><li>x-b3-sampled</li><li>x-b3-flag5</li><li>x-ot-span-Context</li></ul><a href=#service-mesh-涉及的网络栈><h2 id=service-mesh-涉及的网络栈><span class=hanchor arialabel=Anchor># </span>Service Mesh 涉及的网络栈</h2></a><p><img src=https://obsidian.codeplayer.org//../../assets/image_1667312881173_0.png width=auto alt=image.png></p><a href=#cilium-数据平面加速><h2 id=cilium-数据平面加速><span class=hanchor arialabel=Anchor># </span>Cilium 数据平面加速</h2></a><p><img src=https://obsidian.codeplayer.org//../../assets/image_1667312900212_0.png width=auto alt=image.png></p><a href=#小结><h2 id=小结><span class=hanchor arialabel=Anchor># </span>小结</h2></a><p>微服务架构是当前业界普遍认可的架构模式，容器的封装性，隔离性为微服务架构的兴盛提供了有力的保障。</p><p>Kubernetes作为声明式集群管理系统，代表了分布式系统架构的大方向∶</p><ul><li>kube-proxy 本身提供了基于iptables/ipvs的四层 Service Mesh方案;</li><li>Istio/linkerd作为基于Kubernetes 的七层 Service Mesh方案，近期会有比较多的生产部署案例。</li></ul><p>生产系统需要考虑的，除了 Service Mesh 架构带来的便利性，还需要考虑：</p><ul><li>配置一致性检查；</li><li>endpoint 健康检查；</li><li>海量转发规则情况下的scalability。</li></ul></article><hr><div class=page-end id=footer><div class=backlinks-container><h3>Backlinks</h3><ul class=backlinks><li>No backlinks found</li></ul></div><div><script async src=https://cdn.jsdelivr.net/npm/d3@6.7.0/dist/d3.min.js integrity="sha256-+7jaYCp29O1JusNWHaYtgUn6EhuP0VaFuswhNV06MyI=" crossorigin=anonymous></script><h3>Interactive Graph</h3><div id=graph-container></div><style>:root{--g-node:var(--secondary);--g-node-active:var(--primary);--g-node-inactive:var(--visited);--g-link:var(--outlinegray);--g-link-active:#5a7282}</style><script src=https://obsidian.codeplayer.org/js/graph.6579af7b10c818dbd2ca038702db0224.js></script></div></div><div id=contact_buttons><footer><p>Made by Patrick Zhao using <a href=https://github.com/jackyzha0/quartz>Quartz</a>, © 2023</p><ul><li><a href=https://obsidian.codeplayer.org/>Home</a></li><li><a href=https://github.com/PetrusZ>GitHub</a></li></ul></footer></div></div></body></html>
