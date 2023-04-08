@@ -1,6 +1,6 @@
 name: Patrick Zhao
 enableToc: true
-openToc: false
+openToc: true
 enableLinkPreview: true
 enableLatex: true
 enableCodeBlockTitle: true
@@ -23,7 +23,9 @@ description:
 page_title:
   "Avalon Obsidian Vault"
 links:
-  # - link_name: Twitter
-  #   link: https://twitter.com/_jzhao
   - link_name: GitHub
     link: https://github.com/PetrusZ
+  - link_name: Telegram
+    link: https://t.me/Petrus_Z
+  - link_name: Email
+    link: mailto:silencly07@gmail.com
