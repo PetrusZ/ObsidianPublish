@@ -22,6 +22,8 @@
   </script>
   <!-- End of Howxm client code snippet -->
 
+  {{ template "_internal/google_analytics.html" . }}
+
   <!-- Meta tags -->
   <meta charset="UTF-8" />
   <meta
@@ -270,4 +272,3 @@
   <script defer data-domain="{{$trimmedURL}}" src="https://plausible.io/js/script.js"></script>
   <script>window.plausible = window.plausible || function() { (window.plausible.q = window.plausible.q || []).push(arguments) }</script>
 </head>
-{{ template "_internal/google_analytics.html" . }}
