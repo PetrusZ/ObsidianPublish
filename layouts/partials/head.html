@@ -2,6 +2,26 @@
 {{ $config := cond (eq $.Site.Language.Lang "en") "config" (printf "config.%s" $.Site.Language.Lang) }}
 {{ $data := index $.Site.Data $config }}
 <head>
+  <!-- 添加umami数据统计 -->
+  <script async defer data-website-id="de560d7e-374a-4694-943f-f3f01b8dba46" src="https://umami.codeplayer.org:1443/umami.js"></script>
+
+  <!-- 添加浩克数据统计 -->
+  <!-- Start of Howxm client code snippet -->
+  <script>
+  function _howxm(){_howxmQueue.push(arguments)}
+  window._howxmQueue=window._howxmQueue||[];
+  _howxm('setAppID','21c1239b-b2d0-45c5-8eab-246d8b16a9d6');
+  (function(){var scriptId='howxm_script';
+  if(!document.getElementById(scriptId)){
+  var e=document.createElement('script'),
+  t=document.getElementsByTagName('script')[0];
+  e.setAttribute('id',scriptId);
+  e.type='text/javascript';e.async=!0;
+  e.src='https://static.howxm.com/sdk.js';
+  t.parentNode.insertBefore(e,t)}})();
+  </script>
+  <!-- End of Howxm client code snippet -->
+
   <!-- Meta tags -->
   <meta charset="UTF-8" />
   <meta
