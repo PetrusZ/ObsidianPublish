@@ -1,6 +1,6 @@
 baseURL = "https://obsidian.codeplayer.org/"
 languageCode = "zh-cn"
-googleAnalytics = "G-11MD77L81V"
+googleAnalytics = "G-PCXDEM5E1Q"
 relativeURLs = false
 disablePathToLower = true
 ignoreFiles = [
