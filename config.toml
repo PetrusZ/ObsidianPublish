@@ -8,6 +8,9 @@ ignoreFiles = [
     "/content/private/*",
     "/content/中医/*",
     "/content/Templater/*",
+    "/content/Journal/*",
+    "/content/Work/*",
+    # "/content/Inbox/*",
 ]
 summaryLength = 20
 paginate = 10
