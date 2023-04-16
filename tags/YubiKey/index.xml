@@ -3,4 +3,4 @@
 设置FIDO2功能的PIN
 设置OTP功能
 操作系统登录 Mac登陆配置 https://support.yubico.com/hc/en-us/articles/360016649059-Using-Your-YubiKey-as-a-Smart-Card-in-macOS
-注意需要在Yubikey Manger的Applications &amp;gt; PIV里，点击setup for macOS</description></item></channel></rss>
+注意需要在Yubikey Manger的Applications &amp;gt; PIV里，点击setup for macOS</description></item><item><title>玩转YubiKey</title><link>https://obsidian.codeplayer.org/CS/%E5%AE%89%E5%85%A8/%E7%8E%A9%E8%BD%ACYubikey/</link><pubDate>Sun, 16 Apr 2023 12:23:09 +0800</pubDate><guid>https://obsidian.codeplayer.org/CS/%E5%AE%89%E5%85%A8/%E7%8E%A9%E8%BD%ACYubikey/</guid><description>什么是YubiKey 官方解释 [!info] 官方解释 The YubiKey is a form of 2 Factor Authentication (2FA) which works as an extra layer of security to your online accounts.</description></item></channel></rss>
