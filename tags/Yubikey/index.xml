@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Yubikey on</title><link>https://obsidian.codeplayer.org/tags/Yubikey/</link><description>Recent content in Yubikey on</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sun, 16 Apr 2023 12:19:45 +0800</lastBuildDate><atom:link href="https://obsidian.codeplayer.org/tags/Yubikey/index.xml" rel="self" type="application/rss+xml"/><item><title>Yubikey备用密钥配置</title><link>https://obsidian.codeplayer.org/CS/%E5%AE%89%E5%85%A8/Yubikey%E5%A4%87%E7%94%A8%E5%AF%86%E9%92%A5%E9%85%8D%E7%BD%AE/</link><pubDate>Sun, 16 Apr 2023 12:19:45 +0800</pubDate><guid>https://obsidian.codeplayer.org/CS/%E5%AE%89%E5%85%A8/Yubikey%E5%A4%87%E7%94%A8%E5%AF%86%E9%92%A5%E9%85%8D%E7%BD%AE/</guid><description>初始化设置 https://xiaoqiang.blog/yubikey-shiyong/
-设置PIV功能的PIN和PUK
-设置FIDO2功能的PIN
-设置OTP功能
-Mac登陆配置 https://support.yubico.com/hc/en-us/articles/360016649059-Using-Your-YubiKey-as-a-Smart-Card-in-macOS
-注意需要在Yubikey Manger的Applications &amp;gt; PIV里，点击setup for macOS
-开启card only验证后，只有最近使用过验证的yubikey能解锁macOS的启动过程中的登陆</description></item></channel></rss>
