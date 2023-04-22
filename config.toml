@@ -4,8 +4,8 @@ googleAnalytics = "G-PCXDEM5E1Q"
 relativeURLs = false
 disablePathToLower = true
 ignoreFiles = [
-    "/content/templates/*",
-    "/content/private/*",
+    "/content/Templates/*",
+    "/content/Private/*",
     "/content/中医/*",
     "/content/Templater/*",
     "/content/Journal/*",
