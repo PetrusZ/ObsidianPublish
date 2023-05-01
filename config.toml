@@ -1,4 +1,5 @@
 baseURL = "https://obsidian.codeplayer.org/"
+timeZone = "Asia/Shanghai"
 languageCode = "zh-cn"
 googleAnalytics = "G-PCXDEM5E1Q"
 relativeURLs = false
