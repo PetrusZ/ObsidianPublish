@@ -9,7 +9,7 @@ ignoreFiles = [
     "/content/Atlas/*",
     "/content/Calendar/*",
     "/content/Cards/中医/*",
-    "/content/Extras/*",
+    "/content/Extras/Templater/*",
     "/content/Space/*",
 ]
 summaryLength = 20
