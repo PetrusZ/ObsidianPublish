@@ -11,6 +11,7 @@ ignoreFiles = [
     "/content/Cards/中医/*",
     "/content/Extras/Templater/*",
     "/content/Space/*",
+    "/content/HOMEPAGE",
 ]
 summaryLength = 20
 paginate = 10
